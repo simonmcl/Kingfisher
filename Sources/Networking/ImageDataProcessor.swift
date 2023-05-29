@@ -32,7 +32,7 @@ private let sharedProcessingQueue: CallbackQueue =
 // Handles image processing work on an own process queue.
 public class ImageDataProcessor {
 	public let data: Data
-	public let callbacks: [SessionDataTask.TaskCallback]
+	public var callbacks: [SessionDataTask.TaskCallback]
 	public let queue: CallbackQueue
 
     // Note: We have an optimization choice there, to reduce queue dispatch by checking callback

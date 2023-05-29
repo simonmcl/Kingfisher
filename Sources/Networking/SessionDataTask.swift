@@ -35,7 +35,7 @@ public class SessionDataTask {
 
     public struct TaskCallback {
         public let onCompleted: Delegate<Result<ImageLoadingResult, KingfisherError>, Void>?
-        public let options: KingfisherParsedOptionsInfo
+        public var options: KingfisherParsedOptionsInfo
     }
 
     /// Downloaded raw data of current task.
