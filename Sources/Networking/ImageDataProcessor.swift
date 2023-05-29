@@ -30,26 +30,26 @@ private let sharedProcessingQueue: CallbackQueue =
     .dispatch(DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process"))
 
 // Handles image processing work on an own process queue.
-class ImageDataProcessor {
-    let data: Data
-    let callbacks: [SessionDataTask.TaskCallback]
-    let queue: CallbackQueue
+public class ImageDataProcessor {
+	public let data: Data
+	public let callbacks: [SessionDataTask.TaskCallback]
+	public let queue: CallbackQueue
 
     // Note: We have an optimization choice there, to reduce queue dispatch by checking callback
     // queue settings in each option...
-    let onImageProcessed = Delegate<(Result<KFCrossPlatformImage, KingfisherError>, SessionDataTask.TaskCallback), Void>()
+	public let onImageProcessed = Delegate<(Result<KFCrossPlatformImage, KingfisherError>, SessionDataTask.TaskCallback), Void>()
 
-    init(data: Data, callbacks: [SessionDataTask.TaskCallback], processingQueue: CallbackQueue?) {
+	public init(data: Data, callbacks: [SessionDataTask.TaskCallback], processingQueue: CallbackQueue?) {
         self.data = data
         self.callbacks = callbacks
         self.queue = processingQueue ?? sharedProcessingQueue
     }
 
-    func process() {
+	public func process() {
         queue.execute(doProcess)
     }
 
-    private func doProcess() {
+	public func doProcess() {
         var processedImages = [String: KFCrossPlatformImage]()
         for callback in callbacks {
             let processor = callback.options.processor
