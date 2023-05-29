@@ -50,7 +50,7 @@ public class SessionDataTask {
     public let task: URLSessionDataTask
     private var callbacksStore = [CancelToken: TaskCallback]()
 
-    var callbacks: [SessionDataTask.TaskCallback] {
+    public var callbacks: [SessionDataTask.TaskCallback] {
         lock.lock()
         defer { lock.unlock() }
         return Array(callbacksStore.values)
@@ -59,11 +59,11 @@ public class SessionDataTask {
     private var currentToken = 0
     private let lock = NSLock()
 
-    let onTaskDone = Delegate<(Result<(Data, URLResponse?), KingfisherError>, [TaskCallback]), Void>()
-    let onCallbackCancelled = Delegate<(CancelToken, TaskCallback), Void>()
+	public let onTaskDone = Delegate<(Result<(Data, URLResponse?), KingfisherError>, [TaskCallback]), Void>()
+	public let onCallbackCancelled = Delegate<(CancelToken, TaskCallback), Void>()
 
-    var started = false
-    var containsCallbacks: Bool {
+    public var started = false
+    public var containsCallbacks: Bool {
         // We should be able to use `task.state != .running` to check it.
         // However, in some rare cases, cancelling the task does not change
         // task state to `.cancelling` immediately, but still in `.running`.
@@ -72,13 +72,13 @@ public class SessionDataTask {
         return !callbacks.isEmpty
     }
 
-    init(task: URLSessionDataTask) {
+	public init(task: URLSessionDataTask) {
         self.task = task
         self.originalURL = task.originalRequest?.url
         mutableData = Data()
     }
 
-    func addCallback(_ callback: TaskCallback) -> CancelToken {
+	public func addCallback(_ callback: TaskCallback) -> CancelToken {
         lock.lock()
         defer { lock.unlock() }
         callbacksStore[currentToken] = callback
@@ -86,7 +86,7 @@ public class SessionDataTask {
         return currentToken
     }
 
-    func removeCallback(_ token: CancelToken) -> TaskCallback? {
+	public func removeCallback(_ token: CancelToken) -> TaskCallback? {
         lock.lock()
         defer { lock.unlock() }
         if let callback = callbacksStore[token] {
@@ -96,32 +96,32 @@ public class SessionDataTask {
         return nil
     }
     
-    func removeAllCallbacks() -> Void {
+	public func removeAllCallbacks() -> Void {
         lock.lock()
         defer { lock.unlock() }
         callbacksStore.removeAll()
     }
 
-    func resume() {
+	public func resume() {
         guard !started else { return }
         started = true
         task.resume()
     }
 
-    func cancel(token: CancelToken) {
+	public func cancel(token: CancelToken) {
         guard let callback = removeCallback(token) else {
             return
         }
         onCallbackCancelled.call((token, callback))
     }
 
-    func forceCancel() {
+	public func forceCancel() {
         for token in callbacksStore.keys {
             cancel(token: token)
         }
     }
 
-    func didReceiveData(_ data: Data) {
+	public func didReceiveData(_ data: Data) {
         mutableData.append(data)
     }
 }
