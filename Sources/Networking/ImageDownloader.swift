@@ -30,7 +30,7 @@ import AppKit
 import UIKit
 #endif
 
-typealias DownloadResult = Result<ImageLoadingResult, KingfisherError>
+public typealias DownloadResult = Result<ImageLoadingResult, KingfisherError>
 
 /// Represents a success result of an image downloading progress.
 public struct ImageLoadingResult {
@@ -145,8 +145,8 @@ open class ImageDownloader {
     /// Downloader will forward the received authentication challenge for the downloading session to this responder.
     open weak var authenticationChallengeResponder: AuthenticationChallengeResponsible?
 
-    private let name: String
-    private var session: URLSession
+    public let name: String
+    open var session: URLSession
 
     // MARK: Initializers
 
@@ -173,7 +173,7 @@ open class ImageDownloader {
 
     deinit { session.invalidateAndCancel() }
 
-    private func setupSessionHandler() {
+    open func setupSessionHandler() {
         sessionDelegate.onReceiveSessionChallenge.delegate(on: self) { (self, invoke) in
             self.authenticationChallengeResponder?.downloader(self, didReceive: invoke.1, completionHandler: invoke.2)
         }
@@ -202,7 +202,7 @@ open class ImageDownloader {
     }
 
     // Wraps `completionHandler` to `onCompleted` respectively.
-    private func createCompletionCallBack(_ completionHandler: ((DownloadResult) -> Void)?) -> Delegate<DownloadResult, Void>? {
+    open func createCompletionCallBack(_ completionHandler: ((DownloadResult) -> Void)?) -> Delegate<DownloadResult, Void>? {
         return completionHandler.map { block -> Delegate<DownloadResult, Void> in
 
             let delegate =  Delegate<Result<ImageLoadingResult, KingfisherError>, Void>()
@@ -213,7 +213,7 @@ open class ImageDownloader {
         }
     }
 
-    private func createTaskCallback(
+    open func createTaskCallback(
         _ completionHandler: ((DownloadResult) -> Void)?,
         options: KingfisherParsedOptionsInfo
     ) -> SessionDataTask.TaskCallback
@@ -224,7 +224,7 @@ open class ImageDownloader {
         )
     }
 
-    private func createDownloadContext(
+    open func createDownloadContext(
         with url: URL,
         options: KingfisherParsedOptionsInfo,
         done: @escaping ((Result<DownloadingContext, KingfisherError>) -> Void)
@@ -263,7 +263,7 @@ open class ImageDownloader {
         }
     }
 
-    private func addDownloadTask(
+    open func addDownloadTask(
         context: DownloadingContext,
         callback: SessionDataTask.TaskCallback
     ) -> DownloadTask
@@ -281,11 +281,11 @@ open class ImageDownloader {
     }
 
 
-    private func reportWillDownloadImage(url: URL, request: URLRequest) {
+    open func reportWillDownloadImage(url: URL, request: URLRequest) {
         delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
     }
 
-    private func reportDidDownloadImageData(result: Result<(Data, URLResponse?), KingfisherError>, url: URL) {
+    open func reportDidDownloadImageData(result: Result<(Data, URLResponse?), KingfisherError>, url: URL) {
         var response: URLResponse?
         var err: Error?
         do {
@@ -301,7 +301,7 @@ open class ImageDownloader {
         )
     }
 
-    private func reportDidProcessImage(
+    open func reportDidProcessImage(
         result: Result<KFCrossPlatformImage, KingfisherError>, url: URL, response: URLResponse?
     )
     {
@@ -311,7 +311,7 @@ open class ImageDownloader {
 
     }
 
-    private func startDownloadTask(
+    open func startDownloadTask(
         context: DownloadingContext,
         callback: SessionDataTask.TaskCallback
     ) -> DownloadTask
@@ -483,9 +483,9 @@ extension ImageDownloader: AuthenticationChallengeResponsible {}
 extension ImageDownloader: ImageDownloaderDelegate {}
 
 extension ImageDownloader {
-    struct DownloadingContext {
-        let url: URL
-        let request: URLRequest
-        let options: KingfisherParsedOptionsInfo
+    public struct DownloadingContext {
+        public let url: URL
+        public let request: URLRequest
+        public let options: KingfisherParsedOptionsInfo
     }
 }

@@ -33,9 +33,9 @@ public class SessionDataTask {
     /// Represents the type of token which used for cancelling a task.
     public typealias CancelToken = Int
 
-    struct TaskCallback {
-        let onCompleted: Delegate<Result<ImageLoadingResult, KingfisherError>, Void>?
-        let options: KingfisherParsedOptionsInfo
+    public struct TaskCallback {
+        public let onCompleted: Delegate<Result<ImageLoadingResult, KingfisherError>, Void>?
+        public let options: KingfisherParsedOptionsInfo
     }
 
     /// Downloaded raw data of current task.
